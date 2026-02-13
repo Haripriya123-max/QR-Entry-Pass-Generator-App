@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #83a4d4, #b6fbff);
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .section {
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<button onclick="logout()">Logout</button>
+
+<!-- ================= STUDENT PASSES ================= -->
+<div class="section">
+    <h2>Generated Passes (Student Details)</h2>
+
+    <table id="passTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Event</th>
+                <th>Location</th>
+                <th>Start</th>
+                <th>Expiry</th>
+                <th>Type</th>
+                <th>Generated At</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+
+<!-- ================= SECURITY LOGS ================= -->
+<div class="section">
+    <h2>Security Scan Logs</h2>
+
+    <table id="logTable">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Event</th>
+                <th>Location</th>
+                <th>Scanned At</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+
+<script>
+
+// Load passes
+fetch("/admin/passes")
+.then(res => res.json())
+.then(data => {
+
+    const tableBody = document.querySelector("#passTable tbody");
+
+    data.forEach(pass => {
+
+        const row = `
+            <tr>
+                <td>${pass.studentName}</td>
+                <td>${pass.event}</td>
+                <td>${pass.location}</td>
+                <td>${pass.startTime}</td>
+                <td>${pass.expiryTime}</td>
+                <td>${pass.passType}</td>
+                <td>${pass.generatedAt}</td>
+            </tr>
+        `;
+
+        tableBody.innerHTML += row;
+    });
+
+});
+
+
+// Load security logs
+fetch("/admin/securityLogs")
+.then(res => res.json())
+.then(data => {
+
+    const tableBody = document.querySelector("#logTable tbody");
+
+    data.forEach(log => {
+
+        const row = `
+            <tr>
+                <td>${log.studentName}</td>
+                <td>${log.event}</td>
+                <td>${log.location}</td>
+                <td>${log.scannedAt}</td>
+            </tr>
+        `;
+
+        tableBody.innerHTML += row;
+    });
+
+});
+
+
+function logout(){
+    window.location.href = "/logout";
+}
+
+</script>
+
+</body>
+</html>

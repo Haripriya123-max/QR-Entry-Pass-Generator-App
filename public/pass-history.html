@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pass History</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+<h2>My Pass History</h2>
+
+<p>Total Passes: <span id="total"></span></p>
+
+<table border="1" width="100%">
+<thead>
+<tr>
+<th>Event</th>
+<th>Location</th>
+<th>Generated</th>
+<th>Expiry</th>
+<th>Pass Type</th>
+</tr>
+</thead>
+<tbody id="history"></tbody>
+</table>
+
+<br>
+<button onclick="goBack()">Back</button>
+
+</div>
+
+<script>
+
+fetch("/student/passes")
+.then(res=>res.json())
+.then(data=>{
+
+    document.getElementById("total").innerText=data.length;
+
+    data.forEach(pass=>{
+        document.getElementById("history").innerHTML+=`
+        <tr>
+        <td>${pass.event}</td>
+        <td>${pass.location}</td>
+        <td>${pass.generatedAt}</td>
+        <td>${pass.expiryTime}</td>
+        <td>${pass.passType}</td>
+        </tr>
+        `;
+    });
+});
+
+function goBack(){
+    window.location.href="student.html";
+}
+
+</script>
+
+</body>
+</html>

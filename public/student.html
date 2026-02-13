@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #9fb7e3, #8db4d3);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 500px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+            display: block;
+            margin-top: 10px;   /* reduced gap */
+            margin-bottom: 5px; /* small gap */
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 6px;
+            background: #5a67d8;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #434190;
+        }
+
+        #qrcode {
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Student QR Pass Generation</h2>
+
+    <label for="studentName">Student Name</label>
+    <input type="text" id="studentName" placeholder="Enter Your Name">
+
+    <label for="event">Event Name</label>
+    <input type="text" id="event" placeholder="Enter Event Name">
+
+    <label for="location">Event Location</label>
+    <input type="text" id="location" placeholder="Enter Location">
+
+    <label for="startTime">Start Time</label>
+    <input type="datetime-local" id="startTime">
+
+    <label for="expiryTime">Expiry Time</label>
+    <input type="datetime-local" id="expiryTime">
+
+    <label for="passType">Pass Type</label>
+    <select id="passType">
+        <option value="General">General</option>
+        <option value="VIP">VIP</option>
+        <option value="Staff">Staff</option>
+    </select>
+
+    <button onclick="generatePass()">Generate QR Pass</button>
+
+    <div id="qrcode"></div>
+
+    <button onclick="goHistory()">Pass History</button>
+    <button onclick="logout()">Logout</button>
+
+</div>
+
+<script>
+
+function generatePass(){
+
+    const studentName = document.getElementById("studentName").value;
+    const event = document.getElementById("event").value;
+    const location = document.getElementById("location").value;
+    const startTime = document.getElementById("startTime").value;
+    const expiryTime = document.getElementById("expiryTime").value;
+    const passType = document.getElementById("passType").value;
+
+    if(!studentName || !event || !location || !startTime || !expiryTime){
+        alert("Please fill all fields");
+        return;
+    }
+
+    fetch("/generatePass",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            studentName,
+            event,
+            location,
+            startTime,
+            expiryTime,
+            passType
+        })
+    })
+    .then(res=>res.json())
+    .then(result=>{
+
+        if(result.success){
+
+            document.getElementById("qrcode").innerHTML="";
+
+            const qrData = JSON.stringify({
+                id: result.pass.id
+            });
+
+            QRCode.toCanvas(document.createElement('canvas'), qrData, function (err, canvas) {
+                document.getElementById("qrcode").appendChild(canvas);
+            });
+
+        } else {
+            alert("Error generating pass");
+        }
+    });
+}
+
+function goHistory(){
+    window.location.href="pass-history.html";
+}
+
+function logout(){
+    window.location.href="/logout";
+}
+
+</script>
+
+</body>
+</html>

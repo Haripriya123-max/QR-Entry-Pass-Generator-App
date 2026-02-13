@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 500px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        #reader {
+            width: 100%;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            background: #5a67d8;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #434190;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Security QR Scanner</h2>
+
+    <div id="reader"></div>
+
+    <div id="result"></div>
+
+    <button onclick="logout()">Logout</button>
+
+</div>
+
+<script>
+
+function onScanSuccess(decodedText) {
+
+    try {
+        const data = JSON.parse(decodedText);
+
+        fetch("/scan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: data.id })
+        })
+        .then(res => res.json())
+        .then(result => {
+
+            if(result.success){
+
+                document.getElementById("result").innerHTML = `
+                    <p style="color:green;">VALID PASS</p>
+                    <p>Name: ${result.pass.studentName}</p>
+                    <p>Event: ${result.pass.event}</p>
+                    <p>Location: ${result.pass.location}</p>
+                    <p>Pass Type: ${result.pass.passType}</p>
+                `;
+
+            } else {
+
+                document.getElementById("result").innerHTML = 
+                    `<p style="color:red;">INVALID QR</p>`;
+            }
+
+        });
+
+    } catch {
+        document.getElementById("result").innerHTML = 
+            `<p style="color:red;">Invalid QR Format</p>`;
+    }
+}
+
+// Auto start camera when page loads
+const html5QrCode = new Html5Qrcode("reader");
+
+Html5Qrcode.getCameras().then(devices => {
+    if (devices && devices.length) {
+
+        html5QrCode.start(
+            devices[0].id,
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            onScanSuccess
+        );
+    }
+});
+
+function logout(){
+    window.location.href = "/logout";
+}
+
+</script>
+
+</body>
+</html>
