@@ -1,21 +1,21 @@
 {
-  "name": "college_qr",
+  "name": "qr-entry-pass-generator-app",
   "version": "1.0.0",
-  "main": "server.js",
+  "description": "A Node.js application to generate QR codes for entry passes.",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node index.js",
+    "test": "echo 'Error: no test specified' && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Haripriya123-max/QR-Entry-Pass-Generator-App.git"
+  },
+  "keywords": ["qr", "entry", "pass", "generator"],
+  "author": "Haripriya123-max",
   "license": "ISC",
-  "type": "commonjs",
-  "description": "",
   "dependencies": {
-    "body-parser": "^2.2.2",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "express-session": "^1.19.0",
-    "qrcode": "^1.5.4"
+    "express": "^4.17.1",
+    "qr-image": "^3.2.0"
   }
 }
